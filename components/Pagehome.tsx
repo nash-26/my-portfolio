@@ -1,10 +1,12 @@
 import Image from 'next/image';
 import { ExpTabs } from "@/components/Exptabs";
 import {SocialLinks} from "@/components/Socials";
+import {TechStack} from './TechStack';
+
 
 export function Homepage(){
     return(
-        <section className=" min-h-screen scroll-mt-16 pt-2 pl-4 pr-4" id="home">
+        <section className=" min-h-screen scroll-mt-16 pt-2 pl-4 pr-4 mb-10" id="home">
           <div className="flex flex-row items-end mb-10">
             <div>
               <h2 className="text-3xl">Hi, I'm Jonas 👋</h2>
@@ -23,7 +25,8 @@ export function Homepage(){
             </div>
           </div>
           <ExpTabs/>
-
+          <p>Tech Stack I have knowledge of:</p>
+          <TechStack/>
         </section>
     );
 } 
