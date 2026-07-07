@@ -13,7 +13,7 @@ export default function Home() {
       <Main>
         <Homepage />
         <Projectspage />
-        <Contactpage />
+        {/*<Contactpage />*/}  
       </Main>
     </Stage>
   );

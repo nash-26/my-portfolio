@@ -4,7 +4,7 @@ export function Header(){
             <nav className="flex gap-6">
             <a href="#home">Home</a>
             <a href="#projects">Projects</a>
-            <a href="#about">About</a>
+            {/*<a href="#about">About</a>*/}
             </nav>
         </header>
         
