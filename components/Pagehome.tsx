@@ -12,7 +12,15 @@ export function Homepage(){
               <h2 className="text-3xl">Hi, I'm Jonas 👋</h2>
               <p>22 year old computer engineer from the Philippines</p>
               <p>"A blend of wit, wisdom, and tech-focused motivation."</p>
-              <SocialLinks/>
+              <div className='flex gap-2'>
+                <SocialLinks/>
+              <a className='flex w-fit p-2 gap-3 border-2 border-[hsl(var(--bg-light))] rounded-md transition-transform duration-300 ease-in-out hover:bg-[hsl(var(--bg-light))]'
+                href="/resume/Resume_Angeles_Jonas.pdf"
+                download
+              >
+                Download CV
+              </a>
+              </div>
             </div>
             <div className="grow flex justify-center items-center ">
               <Image
