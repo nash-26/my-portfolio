@@ -138,8 +138,8 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 h-full w-full overflow-hidden">
           
-          {/* LEFT SIDE: Media Player */}
-          <div className="relative group aspect-video md:aspect-auto w-full h-[35%] md:h-full bg-neutral-950 flex items-center justify-center border-b md:border-b-0 md:border-r border-neutral-800 overflow-hidden">
+          {/* LEFT SIDE: Media Player (Optimized height on mobile) */}
+          <div className="relative group w-full h-[45%] md:h-full bg-neutral-950 flex items-center justify-center border-b md:border-b-0 md:border-r border-neutral-800 overflow-hidden">
             {currentMedia ? (
               youtubeId ? (
                 <iframe
@@ -156,7 +156,9 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
                   src={currentMedia}
                   alt={`${item.title} media ${currentMediaIndex + 1}`}
                   fill
-                  className="object-contain p-4 md:p-6"
+                  // Changed object-contain to object-cover on mobile for a punchier, edge-to-edge feel, keeping object-contain for desktop.
+                  // If you prefer containing the whole image on mobile, change "object-cover md:object-contain" to "object-contain"
+                  className="object-cover md:object-contain p-0 md:p-6" 
                   priority
                 />
               )
@@ -168,21 +170,21 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
               <>
                 <button
                   onClick={handlePrev}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70 focus:outline-none shadow-md z-10"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70 focus:outline-none shadow-md z-10 text-xs md:text-base"
                 >
                   ❮
                 </button>
                 <button
                   onClick={handleNext}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70 focus:outline-none shadow-md z-10"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70 focus:outline-none shadow-md z-10 text-xs md:text-base"
                 >
                   ❯
                 </button>
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm z-10">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/40 px-2.5 py-1 rounded-full backdrop-blur-sm z-10">
                   {mediaList.map((_, i) => (
                     <span 
                       key={i} 
-                      className={`h-2 w-2 rounded-full transition-colors ${i === currentMediaIndex ? "bg-white" : "bg-white/40"}`}
+                      className={`h-1.5 w-1.5 md:h-2 md:w-2 rounded-full transition-colors ${i === currentMediaIndex ? "bg-white" : "bg-white/40"}`}
                     />
                   ))}
                 </div>
@@ -190,17 +192,17 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
             )}
           </div>
 
-          {/* RIGHT SIDE: Content Info */}
-          <div className="flex flex-col p-6 md:p-10 h-[65%] md:h-full bg-neutral-900 overflow-hidden">
+          {/* RIGHT SIDE: Content Info (Matches the remaining 55% of height on mobile) */}
+          <div className="flex flex-col p-5 md:p-10 h-[55%] md:h-full bg-neutral-900 overflow-hidden">
             
             {/* FIXED TITLE CONTAINER */}
-            <div className="shrink-0 pb-4">
-              <h2 className="text-3xl font-extrabold text-neutral-100 pr-8 tracking-tight">
+            <div className="shrink-0 pb-3 md:pb-4">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-neutral-100 pr-8 tracking-tight">
                 {item.title}
               </h2>
             </div>
 
-            {/* SCROLLABLE DESCRIPTION CONTAINER (With Clean Solid Gray Scrollbar) */}
+            {/* SCROLLABLE DESCRIPTION CONTAINER */}
             <div 
               className="flex-1 overflow-y-auto pr-2 pb-4 min-h-0
                          [&::-webkit-scrollbar]:w-1.5
@@ -213,24 +215,24 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
                 overscrollBehavior: 'contain', 
                 WebkitOverflowScrolling: 'touch',
                 scrollbarWidth: 'thin',
-                scrollbarColor: '#404040 transparent' // Explicitly neutral-700 gray for Firefox
+                scrollbarColor: '#404040 transparent'
               }}
             >
-              <p className="text-neutral-400 leading-relaxed text-base md:text-lg whitespace-pre-line">
+              <p className="text-neutral-400 leading-relaxed text-sm md:text-lg whitespace-pre-line">
                 {item.description || "Detailed overview write-up for this project phase."}
               </p>
             </div>
 
             {/* FIXED TECH STACK CONTAINER */}
-            <div className="border-t border-neutral-800 pt-5 mt-auto shrink-0">
-              <h4 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+            <div className="border-t border-neutral-800 pt-4 md:pt-5 mt-auto shrink-0">
+              <h4 className="text-[10px] md:text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2 md:mb-3">
                 Technologies Used
               </h4>
-              <div className="flex flex-wrap gap-2.5">
+              <div className="flex flex-wrap gap-1.5 md:gap-2.5">
                 {item.techstack.map((tech, index) => (
                   <span
                     key={index}
-                    className="rounded-md bg-neutral-800 px-3.5 py-1.5 text-sm font-medium text-neutral-300"
+                    className="rounded-md bg-neutral-800 px-2.5 py-1 md:px-3.5 md:py-1.5 text-xs md:text-sm font-medium text-neutral-300"
                   >
                     {tech}
                   </span>
