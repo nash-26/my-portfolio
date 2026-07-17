@@ -138,8 +138,8 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 h-full w-full overflow-hidden">
           
-          {/* LEFT SIDE: Media Player (Optimized height on mobile) */}
-          <div className="relative group w-full h-[45%] md:h-full bg-neutral-950 flex items-center justify-center border-b md:border-b-0 md:border-r border-neutral-800 overflow-hidden">
+          {/* LEFT SIDE: Media Player */}
+          <div className="relative w-full h-[45%] md:h-full bg-neutral-950 flex items-center justify-center border-b md:border-b-0 md:border-r border-neutral-800 overflow-hidden">
             {currentMedia ? (
               youtubeId ? (
                 <iframe
@@ -152,20 +152,23 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
               ) : isLocalVideo ? (
                 <video src={currentMedia} controls className="w-full h-full object-contain" />
               ) : (
-                <Image
-                  src={currentMedia}
-                  alt={`${item.title} media ${currentMediaIndex + 1}`}
-                  fill
-                  // Changed object-contain to object-cover on mobile for a punchier, edge-to-edge feel, keeping object-contain for desktop.
-                  // If you prefer containing the whole image on mobile, change "object-cover md:object-contain" to "object-contain"
-                  className="object-cover md:object-contain p-0 md:p-6" 
-                  priority
-                />
+                // The wrapper div acts as the absolute visual frame for Next.js to fill
+                <div className="relative w-full h-full">
+                  <Image
+                    src={currentMedia}
+                    alt={`${item.title} media ${currentMediaIndex + 1}`}
+                    fill
+                    className="object-contain p-2 md:p-6" 
+                    priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
               )
             ) : (
               <div className="text-sm text-neutral-500">No Media Available</div>
             )}
 
+            {/* Navigation arrows (only rendered if multiple media exist) */}
             {hasMultipleMedia && (
               <>
                 <button
