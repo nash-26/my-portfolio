@@ -136,10 +136,11 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
           ✕
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 h-full w-full overflow-hidden">
+        {/* CHANGED FROM GRID TO FLEXBOX: Prevents mobile height collapse */}
+        <div className="flex flex-col md:flex-row h-full w-full overflow-hidden">
           
-          {/* LEFT SIDE: Media Player */}
-          <div className="relative w-full h-[45%] md:h-full bg-neutral-950 flex items-center justify-center border-b md:border-b-0 md:border-r border-neutral-800 overflow-hidden">
+          {/* LEFT SIDE: Media Player (Now reliably takes 45% of height on mobile) */}
+          <div className="relative w-full h-[45%] md:h-full md:w-1/2 bg-neutral-950 flex items-center justify-center border-b md:border-b-0 md:border-r border-neutral-800 overflow-hidden shrink-0">
             {currentMedia ? (
               youtubeId ? (
                 <iframe
@@ -152,13 +153,12 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
               ) : isLocalVideo ? (
                 <video src={currentMedia} controls className="w-full h-full object-contain" />
               ) : (
-                // The wrapper div acts as the absolute visual frame for Next.js to fill
                 <div className="relative w-full h-full">
                   <Image
                     src={currentMedia}
                     alt={`${item.title} media ${currentMediaIndex + 1}`}
                     fill
-                    className="object-contain p-2 md:p-6" 
+                    className="object-contain p-3 md:p-6" 
                     priority
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
@@ -168,7 +168,6 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
               <div className="text-sm text-neutral-500">No Media Available</div>
             )}
 
-            {/* Navigation arrows (only rendered if multiple media exist) */}
             {hasMultipleMedia && (
               <>
                 <button
@@ -195,8 +194,8 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
             )}
           </div>
 
-          {/* RIGHT SIDE: Content Info (Matches the remaining 55% of height on mobile) */}
-          <div className="flex flex-col p-5 md:p-10 h-[55%] md:h-full bg-neutral-900 overflow-hidden">
+          {/* RIGHT SIDE: Content Info (Now takes the remaining 55% of height on mobile) */}
+          <div className="flex flex-col p-5 md:p-10 h-[55%] md:h-full md:w-1/2 bg-neutral-900 overflow-hidden">
             
             {/* FIXED TITLE CONTAINER */}
             <div className="shrink-0 pb-3 md:pb-4">
