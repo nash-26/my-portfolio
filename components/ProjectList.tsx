@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, memo } from "react";
+import { useState, useEffect, memo } from "react";
 import Image from "next/image";
 import { project } from "@/data/project";
+
 
 // Explicitly define what a Project Item looks like
 interface ProjectItem {
@@ -102,9 +103,16 @@ interface ProjectModalProps {
 
 function ProjectModal({ item, onClose }: ProjectModalProps) {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  // NEW: State to track if the current image/video is done loading
+  const [isMediaLoading, setIsMediaLoading] = useState(true);
   
   const mediaList = item.image || [];
   const hasMultipleMedia = mediaList.length > 1;
+
+  // NEW: Whenever the user switches slides, reset the loader back to true
+  useEffect(() => {
+    setIsMediaLoading(true);
+  }, [currentMediaIndex]);
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -120,12 +128,9 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
   const youtubeId = currentMedia ? getYouTubeId(currentMedia) : null;
   const isLocalVideo = currentMedia?.match(/\.(mp4|webm|ogg)$/i) || currentMedia?.includes("video");
 
-  // --- NEW: PRELOAD NEXT IMAGE ---
-  // Figure out what the next image in the index is
   const nextMediaIndex = (currentMediaIndex + 1) % mediaList.length;
   const nextMedia = mediaList[nextMediaIndex];
   const isNextMediaImage = nextMedia && !getYouTubeId(nextMedia) && !nextMedia.match(/\.(mp4|webm|ogg)$/i) && !nextMedia.includes("video");
-  // -------------------------------
 
   return (
     <div 
@@ -147,17 +152,31 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
           
           {/* LEFT SIDE: Media Player */}
           <div className="relative w-full h-[45%] md:h-full md:w-1/2 bg-neutral-950 flex items-center justify-center border-b md:border-b-0 md:border-r border-neutral-800 overflow-hidden shrink-0">
+            
+            {/* NEW: Loading Spinner overlay */}
+            {isMediaLoading && currentMedia && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-neutral-950/40 backdrop-blur-[2px] transition-all">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-neutral-800 border-t-neutral-400" />
+              </div>
+            )}
+
             {currentMedia ? (
               youtubeId ? (
                 <iframe
                   src={`https://www.youtube.com/embed/${youtubeId}?rel=0`}
                   title={`${item.title} video demo`}
-                  className="w-full h-full aspect-video md:h-full md:w-full border-0"
+                  className="w-full h-full aspect-video md:h-full md:w-full border-0 animate-fade-in"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
+                  onLoad={() => setIsMediaLoading(false)} // Hides spinner for youtube video load
                 />
               ) : isLocalVideo ? (
-                <video src={currentMedia} controls className="w-full h-full object-contain" />
+                <video 
+                  src={currentMedia} 
+                  controls 
+                  className="w-full h-full object-contain" 
+                  onCanPlayThrough={() => setIsMediaLoading(false)} // Hides spinner for local video load
+                />
               ) : (
                 <div className="relative w-full h-full">
                   <Image
@@ -165,8 +184,9 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
                     alt={`${item.title} media ${currentMediaIndex + 1}`}
                     fill
                     className="object-contain p-3 md:p-6" 
-                    priority // Keeps the CURRENT image loading instantly
+                    priority
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    onLoad={() => setIsMediaLoading(false)} // NEW: Triggers when the image is fully ready
                   />
                 </div>
               )
@@ -174,8 +194,7 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
               <div className="text-sm text-neutral-500">No Media Available</div>
             )}
 
-            {/* --- HIDDEN PRELOADER --- */}
-            {/* This renders the next image invisibly in the background so the browser downloads it early! */}
+            {/* Hidden Preloader */}
             {isNextMediaImage && (
               <div className="hidden pointer-events-none">
                 <Image
@@ -183,11 +202,10 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
                   alt="Preload next slide"
                   width={1}
                   height={1}
-                  priority // Tells Next.js to download this immediately in the background
+                  priority
                 />
               </div>
             )}
-            {/* ------------------------- */}
 
             {hasMultipleMedia && (
               <>
