@@ -120,6 +120,13 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
   const youtubeId = currentMedia ? getYouTubeId(currentMedia) : null;
   const isLocalVideo = currentMedia?.match(/\.(mp4|webm|ogg)$/i) || currentMedia?.includes("video");
 
+  // --- NEW: PRELOAD NEXT IMAGE ---
+  // Figure out what the next image in the index is
+  const nextMediaIndex = (currentMediaIndex + 1) % mediaList.length;
+  const nextMedia = mediaList[nextMediaIndex];
+  const isNextMediaImage = nextMedia && !getYouTubeId(nextMedia) && !nextMedia.match(/\.(mp4|webm|ogg)$/i) && !nextMedia.includes("video");
+  // -------------------------------
+
   return (
     <div 
       className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-black/60 backdrop-blur-sm"
@@ -136,10 +143,9 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
           ✕
         </button>
 
-        {/* CHANGED FROM GRID TO FLEXBOX: Prevents mobile height collapse */}
         <div className="flex flex-col md:flex-row h-full w-full overflow-hidden">
           
-          {/* LEFT SIDE: Media Player (Now reliably takes 45% of height on mobile) */}
+          {/* LEFT SIDE: Media Player */}
           <div className="relative w-full h-[45%] md:h-full md:w-1/2 bg-neutral-950 flex items-center justify-center border-b md:border-b-0 md:border-r border-neutral-800 overflow-hidden shrink-0">
             {currentMedia ? (
               youtubeId ? (
@@ -159,7 +165,7 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
                     alt={`${item.title} media ${currentMediaIndex + 1}`}
                     fill
                     className="object-contain p-3 md:p-6" 
-                    priority
+                    priority // Keeps the CURRENT image loading instantly
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
@@ -167,6 +173,21 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
             ) : (
               <div className="text-sm text-neutral-500">No Media Available</div>
             )}
+
+            {/* --- HIDDEN PRELOADER --- */}
+            {/* This renders the next image invisibly in the background so the browser downloads it early! */}
+            {isNextMediaImage && (
+              <div className="hidden pointer-events-none">
+                <Image
+                  src={nextMedia}
+                  alt="Preload next slide"
+                  width={1}
+                  height={1}
+                  priority // Tells Next.js to download this immediately in the background
+                />
+              </div>
+            )}
+            {/* ------------------------- */}
 
             {hasMultipleMedia && (
               <>
@@ -194,17 +215,14 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
             )}
           </div>
 
-          {/* RIGHT SIDE: Content Info (Now takes the remaining 55% of height on mobile) */}
+          {/* RIGHT SIDE: Content Info */}
           <div className="flex flex-col p-5 md:p-10 h-[55%] md:h-full md:w-1/2 bg-neutral-900 overflow-hidden">
-            
-            {/* FIXED TITLE CONTAINER */}
             <div className="shrink-0 pb-3 md:pb-4">
               <h2 className="text-2xl md:text-3xl font-extrabold text-neutral-100 pr-8 tracking-tight">
                 {item.title}
               </h2>
             </div>
 
-            {/* SCROLLABLE DESCRIPTION CONTAINER */}
             <div 
               className="flex-1 overflow-y-auto pr-2 pb-4 min-h-0
                          [&::-webkit-scrollbar]:w-1.5
@@ -225,7 +243,6 @@ function ProjectModal({ item, onClose }: ProjectModalProps) {
               </p>
             </div>
 
-            {/* FIXED TECH STACK CONTAINER */}
             <div className="border-t border-neutral-800 pt-4 md:pt-5 mt-auto shrink-0">
               <h4 className="text-[10px] md:text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2 md:mb-3">
                 Technologies Used
