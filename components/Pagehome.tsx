@@ -14,9 +14,12 @@ export function Homepage(){
               <p>"A blend of wit, wisdom, and tech-focused motivation."</p>
               <div className='flex gap-2'>
                 <SocialLinks/>
-              <a className='flex w-fit p-2 gap-3 border-2 border-[hsl(var(--bg-light))] rounded-md transition-transform duration-300 ease-in-out hover:bg-[hsl(var(--bg-light))]'
+              <a 
+                className='flex w-fit p-2 gap-3 border-2 border-[hsl(var(--bg-light))] rounded-md transition-transform duration-300 ease-in-out hover:bg-[hsl(var(--bg-light))]'
                 href="/resume/Resume_Angeles_Jonas.pdf"
-                download
+                download="Resume_Angeles_Jonas.pdf"
+                target="_blank"
+                rel="noreferrer"
               >
                 Download CV
               </a>
